@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Scanning...</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="center">
+
+  <div class="loader"></div>
+  <h2>Scanning website for security issues...</h2>
+  <p id="target"></p>
+
+  <script>
+    document.getElementById("target").innerText =
+      localStorage.getItem("scanTarget");
+  </script>
+  <script>
+  const target = localStorage.getItem("scanTarget");
+
+  if (!target) {
+    alert("No scan target found.");
+    window.location.href = "/";
+  }
+
+  fetch("/scan", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ url: target })
+  })
+    .then(res => res.json())
+    .then(data => {
+      const safeResult = {
+        target: data.target || target,
+        risk: typeof data.risk === "number" ? data.risk : 0,
+        findings: Array.isArray(data.findings) ? data.findings : []
+      };
+
+      localStorage.setItem("scanResult", JSON.stringify(safeResult));
+
+      // ✅ THIS WILL NOW ALWAYS EXECUTE
+      window.location.href = "/report";
+    })
+    .catch(err => {
+      console.error("Scan failed:", err);
+
+      localStorage.setItem("scanResult", JSON.stringify({
+        target,
+        risk: 0,
+        findings: []
+      }));
+
+      window.location.href = "/report";
+    });
+</script>
+
+</body>
+</html>

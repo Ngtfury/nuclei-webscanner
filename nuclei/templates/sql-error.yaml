@@ -1,0 +1,20 @@
+id: sql-error-detection
+
+info:
+  name: SQL Error Disclosure
+  author: student
+  severity: high
+  description: Detects SQL error messages in responses.
+
+requests:
+  - method: GET
+    path:
+      - "{{BaseURL}}/?id=1'"
+
+    matchers:
+      - type: word
+        words:
+          - "SQL syntax"
+          - "mysql_fetch"
+          - "ORA-"
+          - "PostgreSQL"

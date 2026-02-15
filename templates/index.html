@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Web Security Scanner</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="center">
+
+  <h1>Web Security Scanner</h1>
+  <p class="subtitle">
+    Scan websites for common security misconfigurations and vulnerabilities.
+  </p>
+
+  <input id="url" placeholder="Enter website URL to scan">
+  <button onclick="startScan()">Start Scan</button>
+
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

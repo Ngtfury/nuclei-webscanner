@@ -1,0 +1,17 @@
+id: directory-listing-detection
+
+info:
+  name: Directory Listing Enabled
+  author: student
+  severity: medium
+  description: Detects open directory listing.
+
+requests:
+  - method: GET
+    path:
+      - "{{BaseURL}}/"
+
+    matchers:
+      - type: word
+        words:
+          - "Index of /"

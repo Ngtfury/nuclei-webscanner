@@ -1,0 +1,19 @@
+id: admin-panel-detection
+
+info:
+  name: Admin Panel Exposed
+  author: student
+  severity: high
+  description: Detects publicly accessible admin panels.
+
+requests:
+  - method: GET
+    path:
+      - "{{BaseURL}}/admin"
+      - "{{BaseURL}}/administrator"
+      - "{{BaseURL}}/admin/login"
+
+    matchers:
+      - type: status
+        status:
+          - 200

@@ -1,0 +1,19 @@
+id: login-page-detection
+
+info:
+  name: Login Page Detected
+  author: student
+  severity: low
+  description: Detects presence of a login page based on common keywords.
+
+requests:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+
+    matchers:
+      - type: word
+        words:
+          - "password"
+          - "login"
+        condition: or

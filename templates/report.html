@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Security Analysis Assistant</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <!-- Material Symbols -->
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+
+  <!-- Tailwind Config -->
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            primary: "#b02c2c",
+            "background-dark": "#1f1313",
+            "surface-dark": "#2f1d1d",
+            "pure-black": "#050505"
+          },
+          fontFamily: {
+            display: ["Inter", "sans-serif"],
+            mono: ["JetBrains Mono", "monospace"]
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-thumb { background: #422929; border-radius: 4px; }
+  </style>
+</head>
+
+<body class="bg-background-dark text-white font-display h-screen flex flex-col overflow-hidden">
+
+<!-- HEADER -->
+<header class="flex items-center justify-between border-b border-[#422929] px-6 py-4 bg-background-dark">
+  <div class="flex items-center gap-3">
+    <div class="size-10 rounded-xl bg-primary/20 flex items-center justify-center text-primary">
+      <span class="material-symbols-outlined">shield_lock</span>
+    </div>
+    <div>
+      <h1 class="text-lg font-bold">Security Analysis Assistant</h1>
+      <p class="text-xs text-[#c19a9a] font-mono">AI-assisted security scan report</p>
+    </div>
+  </div>
+</header>
+
+<!-- MAIN -->
+<main class="flex flex-1 overflow-hidden">
+
+  <!-- SIDEBAR -->
+  <aside class="w-[420px] border-r border-[#422929] bg-background-dark overflow-y-auto p-6 space-y-6">
+
+    <!-- SUMMARY CARD -->
+    <div class="bg-surface-dark border border-[#422929] rounded-2xl p-5 space-y-4">
+      <div>
+        <p class="text-xs text-[#c19a9a] uppercase font-bold">Target URL</p>
+        <p class="text-sm font-mono truncate" data-target-url></p>
+      </div>
+
+      <div>
+        <p class="text-3xl font-bold">
+          <span data-risk-score>0</span><span class="text-sm text-[#c19a9a]"> /100</span>
+        </p>
+        <p class="text-primary text-sm font-bold">Risk Score</p>
+      </div>
+
+      <div class="flex justify-between text-xs text-[#c19a9a]">
+        <span>Vulnerabilities</span>
+        <span data-vuln-count>0</span>
+      </div>
+    </div>
+
+    <!-- VULNERABILITIES -->
+    <div>
+      <h3 class="font-bold text-sm mb-3 flex items-center gap-2">
+        <span class="material-symbols-outlined text-primary">warning</span>
+        Findings
+      </h3>
+
+      <div id="vuln-list" class="space-y-3"></div>
+    </div>
+
+  </aside>
+
+  <!-- CHAT SECTION -->
+  <section class="flex-1 flex flex-col bg-pure-black relative">
+
+    <!-- CHAT MESSAGES -->
+    <div class="flex-1 overflow-y-auto p-6 space-y-6 chat-scroll-fade"></div>
+
+    <!-- INPUT -->
+    <div class="border-t border-[#2f1d1d] p-4 bg-gradient-to-t from-pure-black">
+      <div class="flex gap-2 mb-2">
+        <button onclick="quickAsk('Explain this issue')" class="px-3 py-1 rounded-full bg-[#1f1313] border border-[#2f1d1d] text-xs text-[#c19a9a] hover:text-white">Explain this issue</button>
+        <button onclick="quickAsk('How risky is this?')" class="px-3 py-1 rounded-full bg-[#1f1313] border border-[#2f1d1d] text-xs text-[#c19a9a] hover:text-white">How risky is this?</button>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <input id="chat-input" class="flex-1 h-12 rounded-full bg-[#151515] border border-[#2f1d1d] px-5 text-white placeholder-[#555]" placeholder="Ask about the scan results..." />
+        <button onclick="sendChatMessage()" class="size-12 rounded-full bg-primary flex items-center justify-center">
+          <span class="material-symbols-outlined">arrow_upward</span>
+        </button>
+      </div>
+    </div>
+
+  </section>
+</main>
+
+<!-- JS -->
+<script src="/static/js/report.js" defer></script>
+
+</body>
+</html>
