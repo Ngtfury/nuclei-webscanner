@@ -1,0 +1,24 @@
+id: xss-detection
+
+info:
+  name: Reflected Cross-Site Scripting (XSS)
+  author: AI-Assistant
+  severity: high
+  description: Detects basic reflected XSS vulnerabilities by injecting a script payload and checking if it is reflected unescaped in the response. Maps to OWASP Top 10 A03:2021-Injection.
+
+requests:
+  - method: GET
+    path:
+      - "{{BaseURL}}/?q=<script>alert('XSS_TEST')</script>"
+      - "{{BaseURL}}/search?query=<script>alert('XSS_TEST')</script>"
+
+    matchers:
+      - type: word
+        words:
+          - "<script>alert('XSS_TEST')</script>"
+        part: body
+      - type: word
+        words:
+          - "text/html"
+        part: header
+    matchers-condition: and

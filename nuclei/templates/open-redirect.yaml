@@ -1,0 +1,20 @@
+id: open-redirect
+
+info:
+  name: Open Redirect
+  author: AI-Assistant
+  severity: medium
+  description: Detects unvalidated redirects, which can be useful for phishing. Maps to OWASP Top 10 A04:2021-Insecure Design (previously its own category).
+
+requests:
+  - method: GET
+    path:
+      - "{{BaseURL}}/?url=https://example.com"
+      - "{{BaseURL}}/?redirect=https://example.com"
+      - "{{BaseURL}}/?next=https://example.com"
+
+    matchers:
+      - type: regex
+        regex:
+          - '(?m)^(?:Location\s*?:\s*?)(?:https?://|//)?(?:[a-zA-Z0-9\-_\.]+\.)?example\.com.*$'
+        part: header

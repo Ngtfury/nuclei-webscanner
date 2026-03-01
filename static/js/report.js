@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Add Enter key event for chat input
   const chatInput = document.getElementById("chat-input");
   if (chatInput) {
-    chatInput.addEventListener("keydown", function(e) {
+    chatInput.addEventListener("keydown", function (e) {
       if (e.key === "Enter" && !e.shiftKey) {
         e.preventDefault();
         window.sendChatMessage();
@@ -65,8 +65,8 @@ function renderVulnerabilities() {
   findings.forEach(f => {
     const severityColor =
       f.severity === "high" ? "border-primary" :
-      f.severity === "medium" ? "border-orange-500" :
-      "border-blue-400";
+        f.severity === "medium" ? "border-orange-500" :
+          "border-blue-400";
 
     container.innerHTML += `
       <div class="rounded-xl bg-surface-dark border-l-4 ${severityColor} p-4 shadow-md border border-[#422929]">
@@ -87,24 +87,28 @@ const GEMINI_API_URL = "/gemini";
 
 // Compose system prompt with scan context
 function getSystemPrompt() {
-  let prompt = "You are a security assistant. You help users understand the results of a web vulnerability scan. ";
+  let prompt = "You are an expert Application Security Analyst and Penetration Tester. Your task is to analyze the results of a Web Application Vulnerability Scan and provide a professional report. ";
   if (scanData.target) {
-    prompt += `The scan was performed on: ${scanData.target}. `;
+    prompt += `The target application is: ${scanData.target}. `;
   }
-  prompt += `The risk score is ${scanData.risk || 0} out of 100. `;
+  prompt += `The calculated risk score is ${scanData.risk || 0} out of 100. `;
+
   if (scanData.findings && scanData.findings.length > 0) {
-    prompt += `There are ${scanData.findings.length} findings. Here are the details:\n`;
+    prompt += `You found ${scanData.findings.length} vulnerabilities from a combined AST pipeline (Nuclei templates + OWASP ZAP Active Fuzzing). Here are the raw findings:\n`;
     scanData.findings.forEach((f, i) => {
-      prompt += `${i + 1}. Name: ${f.name}, Severity: ${f.severity}, Description: ${f.description}, Matched at: ${f.matched_at}.\n`;
+      prompt += `[Issue ${i + 1}] Name: ${f.name}, Severity: ${f.severity}, Description: ${f.description}, Matched at: ${f.matched_at}.\n`;
     });
+    prompt += `\nINSTRUCTIONS: 
+1. When summarizing or explaining these findings, you MUST map each issue to its corresponding OWASP Top 10 (2021) category if applicable (e.g., A01:Broken Access Control, A03:Injection).
+2. Provide concrete mitigation strategies aligned with official OWASP best practices.
+3. Be concise and format your response professionally.`;
   } else {
-    prompt += "No vulnerabilities were detected.";
+    prompt += "No vulnerabilities were detected using the current template set.";
   }
-  prompt += "\nAnswer user questions about the scan, explain vulnerabilities, suggest fixes, and provide security advice. Be concise and clear.";
   return prompt;
 }
 
-window.sendChatMessage = async function(text = null) {
+window.sendChatMessage = async function (text = null) {
   const input = document.getElementById("chat-input");
   const message = text || (input ? input.value.trim() : "");
   if (!message) return;
@@ -116,9 +120,11 @@ window.sendChatMessage = async function(text = null) {
   const systemPrompt = getSystemPrompt();
   const payload = {
     contents: [
-      { role: "user", parts: [
-        { text: systemPrompt + "\nUser: " + message }
-      ] }
+      {
+        role: "user", parts: [
+          { text: systemPrompt + "\nUser: " + message }
+        ]
+      }
     ]
   };
 
@@ -130,13 +136,13 @@ window.sendChatMessage = async function(text = null) {
     });
     const data = await res.json();
     let reply = "Sorry, I couldn't get a response.";
-    
+
     if (data && data.reply) {
       reply = data.reply;
     } else if (data && data.error) {
       reply = `[Gemini error] ${data.error}`;
     }
-    
+
     appendBotMessage(reply);
   } catch (e) {
     appendBotMessage("[Error contacting Gemini API]");
@@ -159,9 +165,13 @@ function appendUserMessage(text) {
 function appendBotMessage(text) {
   const chat = document.querySelector(".chat-scroll-fade");
   if (!chat) return;
+
+  // Parse markdown if available
+  const formattedText = typeof marked !== 'undefined' ? marked.parse(text) : text;
+
   chat.innerHTML += `
-    <div class="self-start bg-[#0f0f0f] border border-[#2f1d1d] p-5 rounded-2xl rounded-tl-sm text-gray-200 max-w-[75%]">
-      ${text}
+    <div class="self-start bg-[#0f0f0f] border border-[#2f1d1d] p-5 rounded-2xl rounded-tl-sm text-gray-200 w-full max-w-[85%] prose prose-invert prose-p:leading-relaxed prose-pre:bg-[#1a1010] prose-pre:border prose-pre:border-[#422929]">
+      ${formattedText}
     </div>
   `;
   chat.scrollTop = chat.scrollHeight;
@@ -184,6 +194,6 @@ function injectInitialMessage() {
 
 
 // ---------- QUICK ACTION BUTTONS ----------
-window.quickAsk = function(text) {
+window.quickAsk = function (text) {
   window.sendChatMessage(text);
 }

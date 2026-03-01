@@ -108,4 +108,4 @@ setTimeout(() => {
     console.warn("Scan timeout fallback triggered");
     window.location.href = "/report";
   }
-}, 30000);
+}, 60000); // 60 seconds to allow for ZAP scan

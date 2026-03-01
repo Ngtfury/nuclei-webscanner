@@ -1,17 +1,25 @@
-# Python
+# Python specific ignores
 __pycache__/
 *.py[cod]
 *$py.class
 venv/
-.env
+env/
+.venv/
 
-# VS Code
-.vscode/
+# Environment Variables (CRITICAL)
+.env
+.env.local
 
 # Project specific
 scans/
 output.json
 
-# OS
+# VS Code / IDEs
+.vscode/
+.idea/
+*.swp
+
+# OS generated files
 .DS_Store
 Thumbs.db
+ehthumbs.db
